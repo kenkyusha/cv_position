@@ -76,7 +76,7 @@ The **full_dataset_train.txt** consist of image file paths to the horiztonal and
 * Run the script **pred_on_net.py** (uses GPU if available):
 ```
 python pred_on_net.py --data [TEST-DATA-LIST] --net [PATH2MODEL] --wts [PATH2WEIGHTS] --fname [NAME]
-python pred_on_net.py --data data/raw_cross_sys4.txt --net wts/net_smallNet.h5 --wts wts/wts_smallNet.h5
+python pred_on_net.py --data data/raw_cross_sys4.txt --net example/net_smallNet.h5 --wts example/wts_smallNet.h5
 ```
 
 ### Results
@@ -99,4 +99,4 @@ TODO:
 - find labels from the training set (horizontal and vertical), which are close to the testing images
 - compare the images to see whether they are similar (CHECK for overfitting)
 
-* visualizing kernels 
+* visualizing CNN kernels 
