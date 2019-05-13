@@ -18,10 +18,6 @@ Additionally the datasets mean image is being substracted from input.
 
 ![Final image](/pictures/img4.png)
 
-My hypothesis is that the results presented in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf) can be improved upon preserving the image shape. Meaning not to use the center crop and mean reduction, but rather scale the image directly down to 224x224 and instead of removing the mean image, use edge detection (cv2.canny).
-
-![Proposed image](/pictures/img5.png)
-
 ## Data
 The data used in this project is provided by [Fraunhofer IIS](https://www.iis.fraunhofer.de/en/ff/lv/dataanalytics/tech/opt/warehouse.html).
 
@@ -54,13 +50,28 @@ mv *.tar.gz data/
 ```
 tar -xvzf [horizontal.tar.gz, vertical.tar.gz, cross.tar.gz]
 ```
+### Network architecture smallNet
+The original PoseNet has 12,431,685 trainable parameters, training it takes awhile. I want to show that with much smaller network it is possible to achieve comparable results as reported in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf).
+**smallNet** consist of fewer convolutional layers has 3,218,279 trainable parameters.
+
 ### Training a model
-Run the script **train_net.py** (uses GPU if available)
+My hypothesis is that the results presented in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf) can be improved upon preserving the image shape. Meaning instead of using the center crop and mean reduction, I only scale the image directly down to 224x224 and instead of removing the mean image, use edge detection (cv2.canny). I trained the **smallNet** with **horizontal** and **vertical** datasets using the mentioned image preprocessing.
+
+![Proposed image](/pictures/img5.png)
+
+* Run the script **train_net.py** (uses GPU if available)
 ```
 python3 train_net.py --model smallNet --test_data data/raw_cross_sys8.txt  --data data/full_dataset_train.txt
 ```
 ### Testing a model
-Run the script **pred_on_net.py** (uses GPU if available)
+
+* Run the script **pred_on_net.py** (uses GPU if available)
 ```
 python3 pred_on_net.py --data data/raw_cross_sys3.txt --net wts/net_smallNet_epoch_224.h5 --wts wts/wts_smallNet_epoch_224.h5 --fname smallCross_sys3
 ```
+
+### Analysis
+TODO: 
+- Grab images of the testing set (cross) and their labels (ca 1500) and 
+- find labels from the training set (horizontal and vertical), which are close to the testing images
+- compare the images to see whether they are similar (CHECK for overfitting)
