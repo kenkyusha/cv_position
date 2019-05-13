@@ -80,6 +80,15 @@ python pred_on_net.py --data data/raw_cross_sys4.txt --net wts/net_smallNet_epoc
 ```
 
 ### Results
+Preliminary results on the cross dataset
+
+Implemenatation | MAE    | CEP    | CE95   | deg (CEP)
+--------------- | ------ | -------| ------ | ---------
+Cross (original)| 1.08 m | 0.86 m | 3.06 m | 0.18 ° 
+smallNet (sys4) | 0.35 m | 0.30 m | 0.74 m | 0.10 °
+smallNet (sys5) | 0.37 m | 0.35 m | 0.71 m | 0.04 °
+smallNet (sys7) | 0.59 m | 0.43 m | 1.48 m | 0.03 °
+
 
 ### Analysis
 TODO: 
