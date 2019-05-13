@@ -76,7 +76,7 @@ The **full_dataset_train.txt** consist of image file paths to the horiztonal and
 * Run the script **pred_on_net.py** (uses GPU if available):
 ```
 python pred_on_net.py --data [TEST-DATA-LIST] --net [PATH2MODEL] --wts [PATH2WEIGHTS] --fname [NAME]
-python pred_on_net.py --data data/raw_cross_sys4.txt --net wts/net_smallNet_epoch_224.h5 --wts wts/wts_smallNet_epoch_224.h5
+python pred_on_net.py --data data/raw_cross_sys4.txt --net wts/net_smallNet.h5 --wts wts/wts_smallNet.h5
 ```
 
 ### Results
@@ -89,6 +89,9 @@ smallNet (sys4) | 0.35 m | 0.30 m | 0.74 m | 0.10 °
 smallNet (sys5) | 0.37 m | 0.35 m | 0.71 m | 0.04 °
 smallNet (sys7) | 0.59 m | 0.43 m | 1.48 m | 0.03 °
 
+![sys4](/pictures/net_smallNet_pred_raw_cross_sys4.png)
+![sys5](/pictures/net_smallNet_epoch_pred_raw_cross_sys5.png)
+![sys7](/pictures/net_smallNet_pred_raw_cross_sys7.png)
 
 ### Analysis
 TODO: 
