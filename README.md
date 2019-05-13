@@ -59,6 +59,7 @@ The original PoseNet has 12,431,685 trainable parameters, training it takes awhi
 </p>
 
 ### GPU
+I used NVIDIA GeForce GTX 1060 GPU (6144 MB) with Intel® Core™ i7-7700HQ Quad-Core Processor.
 ### Training a model
 My hypothesis is that the results presented in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf) can be improved upon preserving the image shape. Meaning instead of using the center crop and mean reduction, I only scale the image directly down to 224x224 and instead of removing the mean image, use edge detection (cv2.canny). I trained the **smallNet** with **horizontal** and **vertical** datasets using the mentioned image preprocessing.
 
@@ -99,4 +100,5 @@ TODO:
 - find labels from the training set (horizontal and vertical), which are close to the testing images
 - compare the images to see whether they are similar (CHECK for overfitting)
 
+* GPU metrics
 * visualizing CNN kernels 
