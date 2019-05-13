@@ -50,9 +50,13 @@ mv *.tar.gz data/
 ```
 tar -xvzf [horizontal.tar.gz, vertical.tar.gz, cross.tar.gz]
 ```
-### Network architecture smallNet
+### Network architecture
 The original PoseNet has 12,431,685 trainable parameters, training it takes awhile. I want to show that with much smaller network it is possible to achieve comparable results as reported in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf).
 **smallNet** consist of fewer convolutional layers has 3,218,279 trainable parameters.
+
+<p align="center">
+  <img width="500" height="500" src="https://github.com/kenkyusha/cv_position/blob/master/pictures/model_plot.png?raw=true">
+</p>
 
 ### Training a model
 My hypothesis is that the results presented in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf) can be improved upon preserving the image shape. Meaning instead of using the center crop and mean reduction, I only scale the image directly down to 224x224 and instead of removing the mean image, use edge detection (cv2.canny). I trained the **smallNet** with **horizontal** and **vertical** datasets using the mentioned image preprocessing.
