@@ -61,7 +61,9 @@ The original PoseNet has 12,431,685 trainable parameters, training it takes awhi
 ### GPU
 I used NVIDIA GeForce GTX 1060 GPU (6144 MB) with Intel® Core™ i7-7700HQ Quad-Core Processor.
 ### Training a model
-My hypothesis is that the results presented in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf) can be improved upon preserving the image shape. Meaning instead of using the center crop and mean reduction, I only scale the image directly down to 224x224 and instead of removing the mean image, use edge detection (cv2.canny). I trained the **smallNet** with **horizontal** and **vertical** datasets using the mentioned image preprocessing.
+When I investigate the input data presented to the network in the [work](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf), I can only guess that the deep CNN does not really know what to look for. The images are losing partial information (center-cropping) and furthermore substracting the mean image will cause the input looking rather blurry and bad. 
+My hypothesis is that the results presented in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf) can be improved upon.
+Meaning instead of using the center crop and mean reduction, I only scale the image directly down to 224x224 and instead of removing the mean image, use edge detection (cv2.canny). I trained the **smallNet** with **horizontal** and **vertical** datasets using the mentioned image preprocessing.
 
 ![Proposed image](/pictures/img5.png)
 
@@ -95,6 +97,8 @@ smallNet (sys7) | 0.59 m | 0.43 m | 1.48 m | 0.03 °
 ![sys7](/pictures/net_smallNet_pred_raw_cross_sys7.png)
 
 ### Analysis
+Thinking about this problem of indoor positioning, where we measurements (images) are taken at each position covering almost 360 ° field of view should work very well using data-driven approaches. I can only think of that the CNN trained with this kind of data and target values (labels), is getting little bit confused on what to look in an image. If I picture myself in a room and try to understand the relation of objects and walls around me, then first thing I think about are the key features. Just as if one is looking at a city map of the place where they are travelling to, we look for certain details such as monuments, significant structures etc for understanding where we are located. This itself gave me an idea that perhaps the CNN can be tought by just showing the lines or the edges of the objects in the images. These lines will look more or less the same if the position is moving towards them or away from them meaning translational invariance and this is exactly something which CNN-s are really good at.
+
 TODO: 
 - Grab images of the testing set (cross) and their labels (ca 1500) and 
 - find labels from the training set (horizontal and vertical), which are close to the testing images
