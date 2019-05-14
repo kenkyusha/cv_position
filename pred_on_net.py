@@ -4,6 +4,7 @@ import tqdm
 from scripts.nets import smallNet
 from scripts.utils import *
 from scripts.metrics import *
+from scripts.loss import *
 import keras
 from keras import backend as K
 from keras.models import load_model
@@ -49,8 +50,6 @@ list_pred_wpgr = []
 for i in tqdm(range(len(imgs))):
     testImg = imgs[i]
     testImg = np.expand_dims(testImg, axis=0)
-    inputsImg = np.zeros([1, 224, 224, 1])
-    inputsImg[0,:] = imgs[i]
     out = model.predict({'inputimg': testImg})
     pred_pos = out[0][0]
     pred_wpgr = out[1][0]

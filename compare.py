@@ -44,7 +44,7 @@ img_list, test_pos, test_wpgr = load_labels(args.test_data)
 
 # returns the list with image pairs
 sens = 0.5
-idx_pairs = compare_label(args.train_data, test_pos, sensitivity = sens)
+idx_pairs, diff = compare_label(args.train_data, test_pos, sensitivity = sens)
 print('***************************************')
 print('Found {} matching pairs with sensitivity of {}'.format(len(idx_pairs), sens))
 #pdb.set_trace()
@@ -72,15 +72,15 @@ for i in range(len(idx_pairs)):
         pred_wpgr = out[1][0]
         theta = rotation_error(pred_wpgr, test_wpgr[idx_pairs[i,0]])
         err = np.linalg.norm(test_pos[idx_pairs[i,0]] - pred_pos)
-        string = 'Test, error = {}, deg = {}'.format(np.round(err,2), abs(np.median(theta)))
+        string = 'Test, error = {}, deg = {}'.format(np.round(err,2), np.round(abs(np.median(theta)),2))
     else:
         string = 'Test'
     cv2.putText(test_img, string, bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
     ### train img
     fname, p0, p1, p2, p3, p4, p5, p6 = lines[idx_pairs[i,1]].split()
     train_img = cv2.imread(fname[:1]+'/'+os.path.dirname(args.train_data)+fname[1:])
-    string = 'Train img, difference = {}'.format(idx_pairs[i,2])
-    cv2.putText(train_img,'Train img', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+    string = 'Train img, difference = {}'.format(np.round(diff[i]),2)
+    cv2.putText(train_img, string, bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
     frame1 = np.concatenate((test_img, train_img), axis = 1)
     cv2.imwrite('res/res_sens_' + str(sens)+ '_'+ str(i) + ".jpg", frame1)
     if cv2.waitKey(1) == 0x1b: # ESC

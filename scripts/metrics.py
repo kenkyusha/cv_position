@@ -44,11 +44,25 @@ def quaternion_to_rot(w, x, y, z):
 	roll_list = []
 	yaw_list = []
 	pitch_list = []
-	for i in range(len(sinp)):
-		if abs(sinp[i]) >= 1:
-			pitch = np.copysign(np.pi / 2, sinp[i])
+	if type(sinp) == np.ndarray:
+		for i in range(len(sinp)):
+			if abs(sinp[i]) >= 1:
+				pitch = np.copysign(np.pi / 2, sinp[i])
+			else:
+				pitch = np.arcsin(sinp[i])
+
+			siny = 2 * (w * z + x * y)
+			cosy = 1 - 2 * (y * y + z * z)
+			yaw = np.arctan2(siny, cosy)
+
+			roll_list.append(np.rad2deg(roll))
+			pitch_list.append(np.rad2deg(pitch))
+			yaw_list.append(np.rad2deg(yaw))
+	else:
+		if abs(sinp) >= 1:
+			pitch = np.copysign(np.pi / 2, sinp)
 		else:
-			pitch = np.arcsin(sinp[i])
+			pitch = np.arcsin(sinp)
 
 		siny = 2 * (w * z + x * y)
 		cosy = 1 - 2 * (y * y + z * z)
@@ -64,7 +78,11 @@ def rotation_error(pred_wpgr, true_wpgr):
 	if type(true_wpgr) and type(pred_wpgr) is list:
 		true_wpgr = np.array(true_wpgr)
 		pred_wpgr = np.array(pred_wpgr)
-	q1 = quaternion_to_rot(pred_wpgr[:,0], pred_wpgr[:,1], pred_wpgr[:,2], pred_wpgr[:,3])
-	q2 = quaternion_to_rot(true_wpgr[:,0], true_wpgr[:,1], true_wpgr[:,2], true_wpgr[:,3])
+	if len(pred_wpgr.shape) > 1:
+		q1 = quaternion_to_rot(pred_wpgr[:,0], pred_wpgr[:,1], pred_wpgr[:,2], pred_wpgr[:,3])
+		q2 = quaternion_to_rot(true_wpgr[:,0], true_wpgr[:,1], true_wpgr[:,2], true_wpgr[:,3])
+	else:
+		q1 = quaternion_to_rot(pred_wpgr[0], pred_wpgr[1], pred_wpgr[2], pred_wpgr[3])
+		q2 = quaternion_to_rot(true_wpgr[0], true_wpgr[1], true_wpgr[2], true_wpgr[3])
 	theta = abs(np.array(q1[2])) - abs(np.array(q2[2]))
 	return theta

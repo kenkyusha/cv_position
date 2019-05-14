@@ -4,6 +4,7 @@ import tqdm
 from scripts.nets import smallNet
 from scripts.utils import *
 from scripts.metrics import *
+from scripts.loss import *
 import argparse
 import pdb
 import keras

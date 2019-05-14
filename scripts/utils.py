@@ -1,8 +1,6 @@
-import keras
-import keras.backend as K
 from tqdm import tqdm
 import cv2
-import os
+import os, errno
 import numpy as np
 import matplotlib.pyplot as plt
 import pdb
@@ -14,14 +12,6 @@ def make_sure_path_exists(path):
         if exception.errno != errno.EEXIST:
             raise
 
-def euc_loss1x(y_true, y_pred):
-	lx = K.sqrt(K.sum(K.square(y_true[:,:] - y_pred[:,:]), axis=1, keepdims=True))
-	return (1 * lx)
-
-def euc_loss1q(y_true, y_pred):
-	lq = K.sqrt(K.sum(K.square(y_true[:,:] - y_pred[:,:]), axis=1, keepdims=True))
-	return (100 * lq)
-
 def preprocess(img, w, h):
 	img = cv2.resize(img, (w, h))
 	img = cv2.Canny(img, 50, 150)
@@ -30,8 +20,8 @@ def preprocess(img, w, h):
 
 def gen_test_data(filename, flag = False, w=224, h=224):
 	images_batch = []
-	po1 = []
-	po2 = []
+	xyz = []
+	wpgr = []
 	with open(filename) as f:
 		print('preparing data for testing ' + filename)
 		i = 0
@@ -48,8 +38,8 @@ def gen_test_data(filename, flag = False, w=224, h=224):
 					# apply preprocessing
 					img = preprocess(img, w, h)
 					images_batch.append(img)
-					po1.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
-					po2.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
+					xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
+					wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
 			else:
 				fname, p0, p1, p2, p3, p4, p5, p6 = line.split()
 				img_name = fname[:1]+'/'+os.path.dirname(filename)+fname[1:]
@@ -57,16 +47,15 @@ def gen_test_data(filename, flag = False, w=224, h=224):
 				# apply preprocessing
 				img = preprocess(img, w, h)
 				images_batch.append(img)
-				po1.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
-				po2.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
+				xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
+				wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
 
-
-	return (images_batch, [np.asarray(po1), np.asarray(po2)])
+	return (images_batch, [np.asarray(xyz), np.asarray(wpgr)])
 
 def gen_train_batch(indexes, batch, iteration, lines, w=224, h=224):
 	images_batch = []
-	po1 = []
-	po2 = []
+	xyz = []
+	wpgr = []
 	idx_offset = batch * iteration
 	for idx in range(idx_offset, idx_offset+batch):
 		rnd_idx = indexes[idx]
@@ -77,9 +66,9 @@ def gen_train_batch(indexes, batch, iteration, lines, w=224, h=224):
 		# apply preprocessing
 		img = preprocess(img, w, h)
 		images_batch.append(img)
-		po1.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
-		po2.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
-	return np.asarray(images_batch), [np.asarray(po1), np.asarray(po2)]
+		xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
+		wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
+	return np.asarray(images_batch), [np.asarray(xyz), np.asarray(wpgr)]
 
 def grab_test(source):
 	imgs = []
@@ -125,3 +114,48 @@ def plot_results(true_pos, pred_pos, fname):
 	plt.scatter(fpredx, fpredy, color=col, s=2, zorder=4)
 	
 	plt.savefig(fname, bbox_inches='tight')
+
+def load_labels(filename):
+	xyz = []
+	wpgr = []
+	img_list = []
+	with open(filename) as f:
+		i = 0
+		for line in tqdm(f):
+			if line.isspace():
+				continue
+			i = i + 1 
+			fname, p0, p1, p2, p3, p4, p5, p6 = line.split()
+			img_name = fname[:1]+'/'+os.path.dirname(filename)+fname[1:]
+			xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
+			wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
+			img_list.append(fname)
+
+	return img_list, xyz, wpgr
+
+def compare_label(filename, compare_list, sensitivity = 0.5):
+	idx_pairs = []
+	diff_list = []
+
+	with open(filename) as f:
+		i = 0
+		for line in tqdm(f):
+			if line.isspace():
+				continue
+			fname, p0, p1, p2, p3, p4, p5, p6 = line.split()
+			xyz = np.array((np.float(p0), np.float(p1), np.float(p2)))
+			# find difference between our test list and current train img, take the abs as we sum
+			diff = abs(compare_list - xyz)
+			# sum the 3 coords together for easier comparison
+			diff_sum = np.sum(diff, axis=1)
+			# find samples with respect to our sensitivity range
+			idx = np.where(diff_sum <= sensitivity)
+			# store first the idx of test image and training image idx
+			if not all(idx[0]) == True:
+				for j in range(len(idx[0])):
+					idx_pairs.append([idx[0][j], i])
+					diff_list.append(diff_sum[j])
+
+			i = i + 1 
+
+	return np.array(idx_pairs), diff_list
