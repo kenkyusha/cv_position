@@ -133,7 +133,7 @@ def load_labels(filename):
 
 	return img_list, xyz, wpgr
 
-def compare_label(filename, compare_list, sensitivity = 0.5):
+def compare_label(filename, compare_list, sensitivity = 0.1):
 	idx_pairs = []
 	diff_list = []
 
@@ -148,13 +148,18 @@ def compare_label(filename, compare_list, sensitivity = 0.5):
 			diff = abs(compare_list - xyz)
 			# sum the 3 coords together for easier comparison
 			diff_sum = np.sum(diff, axis=1)
+			diff_abs = np.abs(diff_sum)
 			# find samples with respect to our sensitivity range
-			idx = np.where(diff_sum <= sensitivity)
+			idx = np.where(diff_abs <= sensitivity)
 			# store first the idx of test image and training image idx
 			if not all(idx[0]) == True:
 				for j in range(len(idx[0])):
+					print('idx[0] = ', idx)
+					print('abs diff = ', diff_abs[idx[0][j]])
+					print('train img = ', i)
+					#pdb.set_trace()
 					idx_pairs.append([idx[0][j], i])
-					diff_list.append(diff_sum[j])
+					diff_list.append(diff_abs[idx[0][j]])
 
 			i = i + 1 
 

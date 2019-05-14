@@ -14,6 +14,16 @@ import pdb
 import os, sys
 import cv2
 
+# display the image pairs side by side
+font                   = cv2.FONT_HERSHEY_SIMPLEX
+upperLeftCorner        = (10, 30)
+upperLeftCorner2       = (10, 60)
+bottomLeftCornerOfText = (10,440)
+bottomLeftCornerOfText2 = (10,470)
+fontScale              = 1
+fontColor              = (255,255,255)
+lineType               = 2
+
 parser = argparse.ArgumentParser()
 #parser.add_argument('--fname', help="name of test", required=True)
 parser.add_argument('--test_data', help="dataset for testing", required=True)
@@ -42,6 +52,18 @@ if args.net != None and args.wts != None:
 
 img_list, test_pos, test_wpgr = load_labels(args.test_data)
 
+### TESTING
+debug = False
+if debug:
+    for i in range(len(img_list)):
+        fname = img_list[i]
+        test_img = cv2.imread(fname[:1]+'/'+os.path.dirname(args.test_data)+fname[1:])
+        string2 = 'True pos = {}'.format([np.round(test_pos[i][0],2), np.round(test_pos[i][1],2),np.round(test_pos[i][2],2)])
+        cv2.putText(test_img, string2, bottomLeftCornerOfText2, font, fontScale, fontColor, lineType)
+        cv2.imshow('img',test_img)
+        print(test_pos[i])
+        cv2.waitKey(1)
+
 # returns the list with image pairs
 sens = 0.5
 idx_pairs, diff = compare_label(args.train_data, test_pos, sensitivity = sens)
@@ -52,12 +74,6 @@ print('Found {} matching pairs with sensitivity of {}'.format(len(idx_pairs), se
 # load the train images
 f = open(args.train_data)
 lines = f.readlines()  
-# display the image pairs side by side
-font                   = cv2.FONT_HERSHEY_SIMPLEX
-bottomLeftCornerOfText = (10,470)
-fontScale              = 1
-fontColor              = (255,255,255)
-lineType               = 2
 
 make_sure_path_exists('res')
 
@@ -71,16 +87,27 @@ for i in range(len(idx_pairs)):
         pred_pos = out[0][0]
         pred_wpgr = out[1][0]
         theta = rotation_error(pred_wpgr, test_wpgr[idx_pairs[i,0]])
-        err = np.linalg.norm(test_pos[idx_pairs[i,0]] - pred_pos)
-        string = 'Test, error = {}, deg = {}'.format(np.round(err,2), np.round(abs(np.median(theta)),2))
+        #err = np.linalg.norm(test_pos[idx_pairs[i,0]] - pred_pos)
+        string = 'Test img: {}'.format(idx_pairs[i,0])#.format(np.round(err,2), np.round(abs(np.median(theta)),2))
+        xyz_pos = test_pos[idx_pairs[i,0]]
+        string2 = 'True pos = {}'.format([np.round(xyz_pos[0],2), np.round(xyz_pos[1],2),np.round(xyz_pos[2],2)])
+        #pdb.set_trace()
+        string3 = 'Predicted = {}'.format([np.round(pred_pos[0],2), np.round(pred_pos[1],2),np.round(pred_pos[2],2)])
     else:
-        string = 'Test'
-    cv2.putText(test_img, string, bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+        string = 'Test img: {}'.format(idx_pairs[i,0])
+        string2 = 'True pos = {}'.format(test_pos[i])
+    cv2.putText(test_img, string, upperLeftCorner, font, fontScale, fontColor, lineType)
+    cv2.putText(test_img, string2, bottomLeftCornerOfText2, font, fontScale, fontColor, lineType)
+    cv2.putText(test_img, string3, bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
     ### train img
     fname, p0, p1, p2, p3, p4, p5, p6 = lines[idx_pairs[i,1]].split()
     train_img = cv2.imread(fname[:1]+'/'+os.path.dirname(args.train_data)+fname[1:])
-    string = 'Train img, difference = {}'.format(np.round(diff[i]),2)
-    cv2.putText(train_img, string, bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+    string = 'Train img: {}'.format(idx_pairs[i,1])
+    string2 = 'True pos = {}'.format([np.round(np.float(p0),2), np.round(np.float(p1),2), np.round(np.float(p2),2)])
+    string3 = 'Pos label diff = {}'.format(np.round(diff[i],2))
+    cv2.putText(train_img, string, upperLeftCorner, font, fontScale, fontColor, lineType)
+    cv2.putText(train_img, string2, bottomLeftCornerOfText2, font, fontScale, fontColor, lineType)
+    cv2.putText(train_img, string3, upperLeftCorner2, font, fontScale, fontColor, lineType)
     frame1 = np.concatenate((test_img, train_img), axis = 1)
     cv2.imwrite('res/res_sens_' + str(sens)+ '_'+ str(i) + ".jpg", frame1)
     if cv2.waitKey(1) == 0x1b: # ESC
