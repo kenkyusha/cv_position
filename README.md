@@ -52,7 +52,7 @@ mv *.tar.gz data/
 tar -xvzf [horizontal.tar.gz, vertical.tar.gz, cross.tar.gz]
 ```
 ### Network architecture
-The original PoseNet has 12,431,685 trainable parameters, training it takes awhile. I want to show that with much smaller network it is possible to achieve comparable results as reported in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf).
+The original PoseNet has 12,431,685 trainable parameters, training it takes awhile. My belief is that the deep CNN used is not learning exactly what is tasked and with much smaller network it is possible to achieve comparable results as reported in the [paper](https://www.mad.tf.fau.de/files/2018/07/Evaluation-Criteria-for-Inside-Out-Indoor-Positioning-Systems-based-on-Machine-Learning.pdf).
 **smallNet** consist of fewer convolutional layers has 3,218,279 trainable parameters.
 
 <p align="center">
