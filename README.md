@@ -102,7 +102,7 @@ Thinking about this problem of indoor positioning, where we measurements (images
 In order to have a deeper look into the images and whether it has just overfit or actually learned the mapping from the input data to their corresponding label I have written a script **compare.py**
 The script takes the test-image list and the training data list and compares the test labels (position) against the training labels with sensitivity. The script runs with following command
 ```
-python3 compare.py --test_data [TEST-DATA-LIST] --train_data [TRAIN-DATA-LIST] --wts [PATH2WEIGHTS] --net [PATH2MODEL]
+python3 compare.py --test_data [TEST-DATA-LIST] --train_data [TRAIN-DATA-LIST] --wts [PATH2WEIGHTS] --net [PATH2MODEL] --sens [threshold]
 python3 compare.py --test_data data/raw_cross_sys4_m.txt --train_data data/full_dataset_train.txt --wts example/wts_smallNet.h5 --net xample/net_smallNet.h5
 ```
 Below are few examples with sensitivity of 0.5, but higher sensitivity for more indept analysis is also recommended
