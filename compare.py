@@ -30,6 +30,7 @@ parser.add_argument('--test_data', help="dataset for testing", required=True)
 parser.add_argument('--train_data', help="dataset for testing", required=True)
 parser.add_argument('--net', help="name of the model to load", required=False)
 parser.add_argument('--wts', help="path to the trained neural network to test ", required=False)
+parser.add_argument('--sens', help="sensitivity for comparison", required=False, default = 0.5)
 
 args = parser.parse_args()
 
@@ -65,8 +66,7 @@ if debug:
         cv2.waitKey(1)
 
 # returns the list with image pairs
-sens = 0.5
-idx_pairs, diff = compare_label(args.train_data, test_pos, sensitivity = sens)
+idx_pairs, diff = compare_label(args.train_data, test_pos, sensitivity = args.sens)
 print('***************************************')
 print('Found {} matching pairs with sensitivity of {}'.format(len(idx_pairs), sens))
 #pdb.set_trace()
