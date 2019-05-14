@@ -23,6 +23,7 @@ The data used in this project is provided by [Fraunhofer IIS](https://www.iis.fr
 
 ### Requirements
 ```
+python3
 pip install tqdm
 pip install statsmodels
 pip install tensorflow-gpu==1.8
@@ -69,8 +70,8 @@ Meaning instead of using the center crop and mean reduction, I only scale the im
 
 * Run the script **train_net.py** (uses GPU if available):
 ```
-python train_net.py --model [MODEL] --test_data [TEST-DATA-LIST]  --data [TRAIN-DATA-LIST]
-python train_net.py --model smallNet --test_data data/raw_cross_sys4.txt  --data data/full_dataset_train.txt
+python3 train_net.py --model [MODEL] --test_data [TEST-DATA-LIST]  --data [TRAIN-DATA-LIST]
+python3 train_net.py --model smallNet --test_data data/raw_cross_sys4.txt  --data data/full_dataset_train.txt
 ```
 The **full_dataset_train.txt** consist of image file paths to the horiztonal and vertical data sets with their corresponding label. The dataset combined is approximately 200,000 images. For testing the model, we use the cross with sys8 (orientation of the image).
 
@@ -78,8 +79,8 @@ The **full_dataset_train.txt** consist of image file paths to the horiztonal and
 
 * Run the script **pred_on_net.py** (uses GPU if available):
 ```
-python pred_on_net.py --data [TEST-DATA-LIST] --net [PATH2MODEL] --wts [PATH2WEIGHTS] --fname [NAME]
-python pred_on_net.py --data data/raw_cross_sys4.txt --net example/net_smallNet.h5 --wts example/wts_smallNet.h5
+python3 pred_on_net.py --data [TEST-DATA-LIST] --net [PATH2MODEL] --wts [PATH2WEIGHTS] --fname [NAME]
+python3 pred_on_net.py --data data/raw_cross_sys4.txt --net example/net_smallNet.h5 --wts example/wts_smallNet.h5
 ```
 
 ### Results
@@ -98,11 +99,21 @@ smallNet (sys7) | 0.59 m | 0.43 m | 1.48 m | 0.03 °
 
 ### Analysis
 Thinking about this problem of indoor positioning, where we measurements (images) are taken at each position covering almost 360 ° field of view should work very well using data-driven approaches. I can only think of that the CNN trained with this kind of data and target values (labels), is getting little bit confused on what to look in an image. If I picture myself in a room and try to understand the relation of objects and walls around me, then first thing I think about are the key features. Just as if one is looking at a city map of the place where they are travelling to, we look for certain details such as monuments, significant structures etc for understanding where we are located. This itself gave me an idea that perhaps the CNN can be tought by just showing the lines or the edges of the objects in the images. These lines will look more or less the same if the position is moving towards them or away from them meaning translational invariance and this is exactly something which CNN-s are really good at.
+In order to have a deeper look into the images and whether it has just overfit or actually learned the mapping from the input data to their corresponding label I have written a script **compare.py**
+The script takes the test-image list and the training data list and compares the test labels (position) against the training labels with sensitivity. The script runs with following command
+```
+python3 compare.py --test_data [TEST-DATA-LIST] --train_data [TRAIN-DATA-LIST] --wts [PATH2WEIGHTS] --net [PATH2MODEL]
+python3 compare.py --test_data data/raw_cross_sys4_m.txt --train_data data/full_dataset_train.txt --wts example/wts_smallNet.h5 --net xample/net_smallNet.h5
+```
+Below are few examples with sensitivity of 0.5, but higher sensitivity for more indept analysis is also recommended
+![wrong label](/pictures/res_sens_0.5_0.jpg)
+Here we can clearly see that both in test data and train data there is data with invalid labels and this occurs many times (many images in training set have the same label > 100 samples). However as we can see the model has learned the true label, see the above script (follow the x and y axis).
+![different orientation](/pictures/res_sens_0.5_18.jpg)
+Here we can see the model has learned to predict the correct label, the sensitivity threshold has picked this one from training set with sensitivity of 0.5
+![wrong label](/pictures/res_sens_0.5_19.jpg)
+Here on the right side we can see the training image with correct label, which has been detected by the comparison script. (see the first one above).
 
 TODO: 
-- Grab images of the testing set (cross) and their labels (ca 1500) and 
-- find labels from the training set (horizontal and vertical), which are close to the testing images
-- compare the images to see whether they are similar (CHECK for overfitting)
 
 * GPU metrics
 * visualizing CNN kernels 
