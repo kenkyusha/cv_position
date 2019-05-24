@@ -18,7 +18,7 @@ def preprocess(img, w, h):
 	img = img.reshape(w,h,1)
 	return img
 
-def gen_test_data(filename, flag = False, w=224, h=224):
+def gen_test_data(filename, flag = False, w=224, h=224, normal = False):
 	images_batch = []
 	xyz = []
 	wpgr = []
@@ -36,7 +36,10 @@ def gen_test_data(filename, flag = False, w=224, h=224):
 					img_name = fname[:1]+'/'+os.path.dirname(filename)+fname[1:]
 					img = cv2.imread(img_name)
 					# apply preprocessing
-					img = preprocess(img, w, h)
+					if normal == True:
+						img = cv2.resize(img, (w,h))
+					else:
+						img = preprocess(img, w, h)
 					images_batch.append(img)
 					xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
 					wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
@@ -45,14 +48,17 @@ def gen_test_data(filename, flag = False, w=224, h=224):
 				img_name = fname[:1]+'/'+os.path.dirname(filename)+fname[1:]
 				img = cv2.imread(img_name)
 				# apply preprocessing
-				img = preprocess(img, w, h)
+				if normal == True:
+					img = cv2.resize(img, (w,h))
+				else:
+					img = preprocess(img, w, h)
 				images_batch.append(img)
 				xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
 				wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
 
 	return (images_batch, [np.asarray(xyz), np.asarray(wpgr)])
 
-def gen_train_batch(indexes, batch, iteration, lines, w=224, h=224):
+def gen_train_batch(indexes, batch, iteration, lines, w=224, h=224, normal = False):
 	images_batch = []
 	xyz = []
 	wpgr = []
@@ -64,7 +70,10 @@ def gen_train_batch(indexes, batch, iteration, lines, w=224, h=224):
 		img_name = fname[:1]+'/data'+fname[1:]
 		img = cv2.imread(img_name)
 		# apply preprocessing
-		img = preprocess(img, w, h)
+		if normal == True:
+			img = cv2.resize(img, (w,h))
+		else:
+			img = preprocess(img, w, h)
 		images_batch.append(img)
 		xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
 		wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))

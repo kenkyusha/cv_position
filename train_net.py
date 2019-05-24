@@ -19,11 +19,19 @@ parser.add_argument('--data', help='dataset that is used for training')
 parser.add_argument('--test_data', help='dataset that is used for testing during training')
 parser.add_argument('--model', help='name of the model to load', required=True)
 parser.add_argument('--restore', help='restore training from certain point')
+parser.add_argument('--channels', help='num of channels')
 args = parser.parse_args()
+
+if args.channels == '3':
+	img_shape = (224,224,3)
+	ch_flag = True
+else:
+	img_shape = (224,224,1)
+	ch_flag = False
 
 # insert here all possible models from scripts.nets:
 if args.model == 'smallNet':
-	model = smallNet()
+	model = smallNet(img_shape)
 	m_name = 'smallNet'
 else:
 	print('Enter a valid model, exiting... ')
@@ -42,7 +50,7 @@ model.compile(optimizer=opt, loss={'cls1_fc_pose_xyz': euc_loss1x, 'cls1_fc_pose
 model.summary()
 
 # data preparation:
-test_data = gen_test_data(args.test_data, flag = True)
+test_data = gen_test_data(args.test_data, flag = True, normal = ch_flag)
 
 count = 0
 count = len(open(args.data).readlines())
@@ -77,7 +85,7 @@ for e in tqdm(range(num_epochs)):
 		print('Training progress {}/{} iterations'.format(i+1,train_it))
 		input_batch = None
 		label_batch = None
-		input_batch, label_batch = gen_train_batch(train_idx, batch_size, i, lines)
+		input_batch, label_batch = gen_train_batch(train_idx, batch_size, i, lines, normal = ch_flag)
 		y_pos = label_batch[0]
 		y_wpgr = label_batch[1] 
 		# fit the model

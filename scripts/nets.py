@@ -5,8 +5,8 @@ from keras.layers import concatenate, BatchNormalization
 from keras.models import Model
 import numpy as np
 
-def smallNet(weights=None):
-    inputLayer = Input(shape=(224, 224, 1), dtype='float32', name='inputimg')
+def smallNet(im_shape = (224,224,1),weights=None):
+    inputLayer = Input(shape=im_shape, dtype='float32', name='inputimg')
     #input = Input(shape=(224, 224, 3))
 
     conv1 = Convolution2D(64,7,7,subsample=(2,2),border_mode='same',activation='relu',name='conv1')(inputLayer)
