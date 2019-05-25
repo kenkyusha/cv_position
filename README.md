@@ -32,8 +32,11 @@ pip install opencv-python
 ```
 ### Setup
 * Clone the repository $cv_position
-
-* Download the datasets for training:
+```
+chmod +x setupstuff.sh
+./setupstuff.sh
+```
+* Download the datasets for training(MANUALLY):
 ```
 cd $cv_position
 wget https://www2.iis.fraunhofer.de/IPIN/training/horizontal.tar.gz
