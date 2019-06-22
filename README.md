@@ -73,8 +73,8 @@ Meaning instead of using the center crop and mean reduction, I only scale the im
 
 * Run the script **train_net.py** (uses GPU if available):
 ```
-python3 train_net.py --model [MODEL] --test_data [TEST-DATA-LIST]  --data [TRAIN-DATA-LIST]
-python3 train_net.py --model smallNet --test_data data/raw_cross_sys4.txt  --data data/full_dataset_train.txt
+python train_net.py --model [MODEL] --test_data [TEST-DATA-LIST]  --data [TRAIN-DATA-LIST]
+python train_net.py --model smallNet --test_data data/cross_sys4_cam1.txt  --data data/vert_horizontal.txt
 ```
 The **full_dataset_train.txt** consist of image file paths to the horiztonal and vertical data sets with their corresponding label. The dataset combined is approximately 200,000 images. For testing the model, we use the cross with sys8 (orientation of the image).
 
@@ -82,8 +82,8 @@ The **full_dataset_train.txt** consist of image file paths to the horiztonal and
 
 * Run the script **pred_on_net.py** (uses GPU if available):
 ```
-python3 pred_on_net.py --data [TEST-DATA-LIST] --net [PATH2MODEL] --wts [PATH2WEIGHTS] --fname [NAME]
-python3 pred_on_net.py --data data/raw_cross_sys4.txt --net example/net_smallNet.h5 --wts example/wts_smallNet.h5
+python pred_on_net.py --data [TEST-DATA-LIST] --net [PATH2MODEL] --wts [PATH2WEIGHTS] --fname [NAME]
+python pred_on_net.py --data data/cross_sys4_cam1.txt --net example/net_smallNet.h5 --wts example/wts_smallNet.h5
 ```
 
 ### Results
@@ -106,7 +106,7 @@ In order to have a deeper look into the images and whether it has just overfit o
 The script takes the test-image list and the training data list and compares the test labels (position) against the training labels with sensitivity. The script runs with following command
 ```
 python3 compare.py --test_data [TEST-DATA-LIST] --train_data [TRAIN-DATA-LIST] --wts [PATH2WEIGHTS] --net [PATH2MODEL] --sens [threshold]
-python3 compare.py --test_data data/raw_cross_sys4.txt --train_data data/full_dataset_train.txt --wts example/wts_smallNet.h5 --net example/net_smallNet.h5
+python3 compare.py --test_data data/cross_sys4_cam1.txt --train_data data/vert_horizontal.txt --wts example/wts_smallNet.h5 --net example/net_smallNet.h5
 ```
 Below are few examples with sensitivity of 0.5, but higher sensitivity for more indept analysis is also recommended
 ![wrong label](/pictures/res_sens_0.5_0.jpg)
