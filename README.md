@@ -33,8 +33,9 @@ pip install opencv-python
 ### Setup
 * Clone the repository $cv_position
 ```
-chmod +x setupstuff.sh
-./setupstuff.sh
+> pip install -r requirements.txt
+> chmod +x setupstuff.sh
+> ./setupstuff.sh
 ```
 * Download the datasets for training(MANUALLY):
 ```
