@@ -1,9 +1,11 @@
 from tqdm import tqdm
 import cv2
-import os, errno
+import os, errno, sys
 import numpy as np
 import matplotlib.pyplot as plt
-import pdb
+import pdb	
+from pathlib import Path
+#mainly for handling paths in windows!!
 
 def make_sure_path_exists(path):
     try:
@@ -34,7 +36,9 @@ def gen_test_data(filename, flag = False, w=224, h=224, normal = False):
 				if i % 95 == 0 or i % 96 == 0 or i % 97 == 0 or i % 98 == 0 or i % 99 == 0 or i % 100 == 0:
 					fname, p0, p1, p2, p3, p4, p5, p6 = line.split()
 					img_name = fname[:1]+'/'+os.path.dirname(filename)+fname[1:]
-					img = cv2.imread(img_name)
+					#pdb.set_trace()
+					img_name = Path(img_name)
+					img = cv2.imread(str(img_name))
 					# apply preprocessing
 					if normal == True:
 						img = cv2.resize(img, (w,h))
@@ -46,7 +50,8 @@ def gen_test_data(filename, flag = False, w=224, h=224, normal = False):
 			else:
 				fname, p0, p1, p2, p3, p4, p5, p6 = line.split()
 				img_name = fname[:1]+'/'+os.path.dirname(filename)+fname[1:]
-				img = cv2.imread(img_name)
+				img_name = Path(img_name)
+				img = cv2.imread(str(img_name))
 				# apply preprocessing
 				if normal == True:
 					img = cv2.resize(img, (w,h))
@@ -68,7 +73,30 @@ def gen_train_batch(indexes, batch, iteration, lines, w=224, h=224, normal = Fal
 		fname, p0, p1, p2, p3, p4, p5, p6 = lines[rnd_idx].split()
 
 		img_name = fname[:1]+'/data'+fname[1:]
-		img = cv2.imread(img_name)
+		img_name = Path(img_name)
+		img = cv2.imread(str(img_name))
+		# apply preprocessing
+		if normal == True:
+			img = cv2.resize(img, (w,h))
+		else:
+			img = preprocess(img, w, h)
+		images_batch.append(img)
+		xyz.append(np.array((np.float(p0), np.float(p1), np.float(p2))))
+		wpgr.append(np.array((np.float(p3), np.float(p4), np.float(p5), np.float(p6))))
+	return np.asarray(images_batch), [np.asarray(xyz), np.asarray(wpgr)]
+
+def gen_train_batch(indexes, batch, iteration, lines, w=224, h=224, normal = False):
+	images_batch = []
+	xyz = []
+	wpgr = []
+	idx_offset = batch * iteration
+	for idx in range(idx_offset, idx_offset+batch):
+		rnd_idx = indexes[idx]
+		fname, p0, p1, p2, p3, p4, p5, p6 = lines[rnd_idx].split()
+
+		img_name = fname[:1]+'/data'+fname[1:]
+		img_name = Path(img_name)
+		img = cv2.imread(str(img_name))
 		# apply preprocessing
 		if normal == True:
 			img = cv2.resize(img, (w,h))
