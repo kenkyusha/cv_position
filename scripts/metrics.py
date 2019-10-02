@@ -1,7 +1,7 @@
 import numpy as np
 import pdb
 
-def CalcMetrics(truth, pred, verbose = 0):
+def calc_metrics(truth, pred, verbose = 0):
 	if type(truth) and type(pred) is list:
 		truth = np.array(truth)
 		pred = np.array(pred)
@@ -18,7 +18,7 @@ def CalcMetrics(truth, pred, verbose = 0):
 		print('CEP95= ', sort_ER[CEP95_ind])
 	return ER, MAE, sort_ER[CEP_ind], sort_ER[CEP95_ind]
 
-def CalcMetrics2D(truth, pred, verbose = 0):
+def calc_metrics_2D(truth, pred, verbose = 0):
 	if type(truth) and type(pred) is list:
 		truth = np.array(truth)
 		pred = np.array(pred)

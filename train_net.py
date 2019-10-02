@@ -108,12 +108,12 @@ for e in tqdm(range(num_epochs)):
 		
 		# METRIXS
 		theta = rotation_error(list_pred_wpgr, true_wpgr)
-		ER, MAE, CEP, CE95 = CalcMetrics(true_pos, list_pred_pos)
+		ER, MAE, CEP, CE95 = calc_metrics(true_pos, list_pred_pos)
 		print('3D Metrics on testing data:')
 		print('MAE = {}, CEP = {}, CE95 = {}'.format(MAE, CEP, CE95))
 		string = str(e)+ ',' + str(MAE) + ',' + str(CEP) + ',' + str(CE95) + ',' + str(np.median(theta)) + '\n'
 		fo.write(string)
-		ER, MAE, CEP, CE95 = CalcMetrics2D(true_pos, list_pred_pos)
+		ER, MAE, CEP, CE95 = calc_metrics_2D(true_pos, list_pred_pos)
 		print('2D Metrics on testing data:')
 		print('MAE = {}, CEP = {}, CE95 = {}'.format(MAE, CEP, CE95))
 		print('Error in degrees = {}'.format(np.median(theta)))

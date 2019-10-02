@@ -58,10 +58,10 @@ for i in tqdm(range(len(imgs))):
 
 # METRICS
 theta = rotation_error(list_pred_wpgr, true_label[1])
-ER, MAE, CEP, CE95 = CalcMetrics(true_label[0], list_pred_pos)
+ER, MAE, CEP, CE95 = calc_metrics(true_label[0], list_pred_pos)
 print('3D Metrics on testing data:')
 print('MAE = {}, CEP = {}, CE95 = {}'.format(MAE, CEP, CE95))
-ER, MAE, CEP, CE95 = CalcMetrics2D(true_label[0], list_pred_pos)
+ER, MAE, CEP, CE95 = calc_metrics_2D(true_label[0], list_pred_pos)
 print('2D Metrics on testing data:')
 print('MAE = {}, CEP = {}, CE95 = {}'.format(MAE, CEP, CE95))
 print('Error in degrees = {}'.format(np.median(theta)))

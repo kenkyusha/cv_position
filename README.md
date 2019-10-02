@@ -26,7 +26,7 @@ The data used in this project is provided by [Fraunhofer IIS](https://www.iis.fr
 python3
 pip install tqdm
 pip install statsmodels
-pip install tensorflow-gpu==1.8
+pip install tensorflow-gpu==1.14
 pip install keras
 pip install opencv-python
 ```
