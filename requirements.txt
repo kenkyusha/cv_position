@@ -1,4 +1,4 @@
-tensorflow==1.15 #1.8.0
+tensorflow==2.6.4 #1.8.0
 Keras==2.2.4
 matplotlib
 numpy==1.16.4
