@@ -1,7 +1,7 @@
 tensorflow==1.15 #1.8.0
 Keras==2.2.4
 matplotlib
-numpy==1.16.4
+numpy==1.22.0
 opencv-python==4.1.0.25
 pathlib2==2.1.0
 scikit-learn
